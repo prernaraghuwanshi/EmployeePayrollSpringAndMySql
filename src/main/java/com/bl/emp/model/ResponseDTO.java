@@ -1,6 +1,6 @@
 package com.bl.emp.model;
 
-public class ResponseDo {
+public class ResponseDTO {
 
 	private String message;
 	
@@ -12,7 +12,7 @@ public class ResponseDo {
 		this.message = message;
 	}
 
-	public ResponseDo(String message) {
+	public ResponseDTO(String message) {
 		super();
 		this.message = message;
 	}

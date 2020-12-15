@@ -4,14 +4,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.bl.emp.model.EmployeeEntity;
 import com.bl.emp.exception.BadRequestException;
 import com.bl.emp.exception.NotFoundException;
-import com.bl.emp.model.EmployeeDO;
-import com.bl.emp.model.ResponseDo;
+import com.bl.emp.model.EmployeeDTO;
+import com.bl.emp.model.ResponseDTO;
 import com.bl.emp.repository.EmployeeRepository;
 import com.bl.emp.service.IEmployeePayrollService;
 
@@ -23,83 +24,87 @@ public class EmployeePayrollServiceImpl implements IEmployeePayrollService {
 	@Autowired
 	private EmployeeRepository employeeRepository;
 	
+	@Autowired
+	private ModelMapper modelMapper;
+	
 	@Override
-	public ResponseDo addEmployee(EmployeeDO empReqDo) {
+	public ResponseDTO addEmployee(EmployeeDTO empReqDo) {
 
 		if (empReqDo == null) {
 			throw new BadRequestException("Name is not Proper");
 		}
-		EmployeeEntity empEntity = new EmployeeEntity();
-		empEntity.setName(empReqDo.getName());
-		empEntity.setDepartment(empReqDo.getDepartment());
-		empEntity.setSalary(empReqDo.getSalary());
-		empEntity.setGender(empReqDo.getGender());
-		empEntity.setImagePath(empReqDo.getImagePath());
-		empEntity.setStartDate(new Date());
-		empEntity.setNotes(empReqDo.getNotes());
+		EmployeeEntity empEntity = modelMapper.map(empReqDo, EmployeeEntity.class);
 		empEntity = employeeRepository.save(empEntity);
 		if (empEntity != null) {
-			return new ResponseDo("Successfully data inserted");
+			return new ResponseDTO("Successfully data inserted");
 		} else {
-			return new ResponseDo("Failed to insert the Data");
+			return new ResponseDTO("Failed to insert the Data");
 		}
 
 	}
 	
+//	@Override
+//	public List<EmployeeDO> getEmployeeList() {
+//		List<EmployeeEntity> empList = employeeRepository.findAll();
+//		if(empList == null || empList.isEmpty()) {
+//			throw new NotFoundException("No Data Found of any Employee");
+//		}
+//		return empList.stream().map(employee -> {
+//			EmployeeDO emp = new EmployeeDO();
+//			emp.setName(employee.getName());
+//			emp.setDepartment(employee.getDepartment());
+//			emp.setGender(employee.getGender());
+//			emp.setImagePath(employee.getImagePath());
+//			emp.setNotes(employee.getNotes());
+//			emp.setSalary(employee.getSalary());
+//			//emp.setStartDate(employee.getStartDate().toString());
+//			return emp;
+//		}).collect(Collectors.toList());
+//	}
+	
 	@Override
-	public List<EmployeeDO> getEmployeeList() {
+	public List<EmployeeEntity> getEmployeeList(){
 		List<EmployeeEntity> empList = employeeRepository.findAll();
 		if(empList == null || empList.isEmpty()) {
 			throw new NotFoundException("No Data Found of any Employee");
 		}
-		return empList.stream().map(employee -> {
-			EmployeeDO emp = new EmployeeDO();
-			emp.setName(employee.getName());
-			emp.setDepartment(employee.getDepartment());
-			emp.setGender(employee.getGender());
-			emp.setImagePath(employee.getImagePath());
-			emp.setNotes(employee.getNotes());
-			emp.setSalary(employee.getSalary());
-			emp.setStartDate(employee.getStartDate().toString());
-			return emp;
-		}).collect(Collectors.toList());
+		return empList;
 	}
 	
 	@Override
-	public ResponseDo getEmployee(long empId) {
+	public ResponseDTO getEmployee(long empId) {
 		EmployeeEntity empEntity = new EmployeeEntity();
 		empEntity = employeeRepository.findById(empId).get();
 		if(empEntity!= null) {
-			return new ResponseDo(empEntity.toString());
+			return new ResponseDTO(empEntity.toString());
 		} else {
-			return new ResponseDo("Failure data retrival");
+			return new ResponseDTO("Failure data retrival");
 		}
 	}
 	
 	@Override
-	public ResponseDo deleteEmployee(long empId) {
+	public ResponseDTO deleteEmployee(long empId) {
 		employeeRepository.deleteById(empId);
-		return new ResponseDo("Deleted");
+		return new ResponseDTO("Deleted");
 	}
 	
 	@Override
-	public ResponseDo updateEmployee(long empId, EmployeeDO empReqDo) {
-		EmployeeEntity empEntity = new EmployeeEntity();
-		empEntity = employeeRepository.findById(empId).get();
+	public ResponseDTO updateEmployee(long empId, EmployeeDTO empReqDo) {
+		EmployeeEntity empEntity = employeeRepository.findById(empId).get();
 		empEntity.setName(empReqDo.getName());
 		empEntity.setDepartment(empReqDo.getDepartment());
 		empEntity.setSalary(empReqDo.getSalary());
 		empEntity.setGender(empReqDo.getGender());
 		empEntity.setImagePath(empReqDo.getImagePath());
-		empEntity.setStartDate(new Date());
+		empEntity.setStartDate(empReqDo.getStartDate());
 		empEntity.setNotes(empReqDo.getNotes());
 		empEntity = employeeRepository.save(empEntity);
 		System.out.println(empEntity);
 		System.out.println(empReqDo);
 		if(empEntity!= null) {
-			return new ResponseDo("Success data updation");
+			return new ResponseDTO("Success data updation");
 		} else {
-			return new ResponseDo("Failure data updation");
+			return new ResponseDTO("Failure data updation");
 		}
 		
 	}

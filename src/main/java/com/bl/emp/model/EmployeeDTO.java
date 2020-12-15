@@ -1,30 +1,33 @@
 package com.bl.emp.model;
 
+import java.util.Date;
+
 import javax.validation.constraints.NotEmpty;
 
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-
-public @Data class EmployeeDO {
+@Getter
+@Setter
+public class EmployeeDTO {
 
 	@NotEmpty(message = "Name cannot be empty")
 	private String name;
 	private String gender;
 	private String imagePath;
 	private int salary;
-	private String startDate;
+	private Date startDate;
 	private String notes;
 	private String department;
 	
 	@Override
 	public String toString() {
 		return "EmployeeReqDO [name=" + name + ", gender=" + gender + ", imagePath=" + imagePath + ", salary=" + salary
-				+ ", startDate=" + startDate + ", notes=" + notes + ", department=" + department + "]";
+				 + ", notes=" + notes + ", department=" + department + "]";
 	}
 
-	public EmployeeDO() {
+	public EmployeeDTO() {
 		super();
 	}
 

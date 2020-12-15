@@ -68,6 +68,7 @@ public class EmployeeEntity {
 		return startDate;
 	}
 	public void setStartDate(Date startDate) {
+		//startDate = new Date();
 		this.startDate = startDate;
 	}
 	public String getNotes() {
